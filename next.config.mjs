@@ -7,11 +7,16 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    domains: ['firebasestorage.googleapis.com', 'oaidalleapiprodscus.blob.core.windows.net'],
+    domains: [
+      "firebasestorage.googleapis.com",
+      "oaidalleapiprodscus.blob.core.windows.net",
+    ],
     unoptimized: true,
   },
   experimental: {
-    serverActions: true,
+    serverActions: {
+      bodySizeLimit: "10mb",
+    },
   },
 };
 
