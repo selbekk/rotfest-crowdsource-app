@@ -127,11 +127,6 @@ export default function ImageGallery() {
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
                   <p className="text-white font-medium">{image.userName || "Anonym"}</p>
                 </div>
-                <img
-                  src="/qrcode.png"
-                  alt="QR Code"
-                  className="absolute bottom-2 right-2 w-16 h-16 z-10" // Positioned bottom-right, fixed size, z-index to ensure on top
-                />
               </motion.div>
             ))}
           </AnimatePresence>
@@ -144,6 +139,11 @@ export default function ImageGallery() {
           {Math.min(currentIndex + 6, images.length)} av {images.length}
         </p>
       </div>
+      <img
+        src="/qrcode.png"
+        alt="QR Code"
+        className="fixed bottom-4 right-4 w-40 h-40 z-50 rounded-md border-2 border-white shadow-lg" 
+      />
     </div>
   )
 }
