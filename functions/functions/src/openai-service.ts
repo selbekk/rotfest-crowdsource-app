@@ -1,12 +1,11 @@
 import OpenAI from "openai";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export async function processImageWithOpenAI(
   imageUrl: string
 ): Promise<string | null> {
+  const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
   try {
     // Download the image first
     const imageResponse = await fetch(imageUrl);
