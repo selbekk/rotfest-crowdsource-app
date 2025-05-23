@@ -95,18 +95,18 @@ export default function ImageGallery() {
   return (
     <div ref={galleryRef} className="w-full h-full bg-black flex flex-col">
       <div className="flex justify-between items-center p-4 bg-black text-white">
-        <h1 className="text-2xl font-bold">Rotfest Bildegalleri</h1>
+        <h1 className="text-2xl font-bold">Minner fra Rotfest</h1>
         <button
           onClick={toggleFullscreen}
-          className="px-4 py-2 bg-gray-800 rounded hover:bg-gray-700 transition-colors"
+          className="hidden md:blockpx-4 py-2 bg-gray-800 rounded hover:bg-gray-700 transition-colors"
         >
           {isFullscreen ? "Avslutt fullskjerm" : "Fullskjerm"}
         </button>
       </div>
 
       <div className="flex-1 flex items-center justify-center p-4">
-        <div className="grid grid-cols-3 gap-4 w-full h-full">
-          <AnimatePresence mode="wait">
+        <div className="grid md:grid-cols-3 gap-4 w-full h-full">
+          <AnimatePresence mode="popLayout">
             {currentImages.map((image) => (
               <motion.div
                 key={`${image.id}`}
@@ -129,7 +129,7 @@ export default function ImageGallery() {
                   <div className="absolute inset-0 flex items-center justify-center bg-black/50">
                     <Loader2 className="h-6 w-6 animate-spin text-white mr-2" />
                     <p className="text-white text-sm font-semibold">
-                      Behandler...
+                      Fornorsker...
                     </p>
                   </div>
                 )}
@@ -154,7 +154,7 @@ export default function ImageGallery() {
       <img
         src="/qrcode.png"
         alt="QR Code"
-        className="fixed bottom-4 right-4 w-20 h-20 z-50 rounded-md border-2 border-white shadow-lg" // Adjusted size, added border/shadow for better visibility
+        className="hidden md:block fixed bottom-4 right-4 w-40 h-40 z-50 rounded-md border-2 border-white shadow-lg" // Adjusted size, added border/shadow for better visibility
       />
     </div>
   );

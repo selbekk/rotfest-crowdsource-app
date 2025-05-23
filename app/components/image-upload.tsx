@@ -168,7 +168,7 @@ export default function ImageUpload({ initialUserName }: ImageUploadProps) {
             {isUploading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Behandler...
+                Husker minner...
               </>
             ) : (
               <>
