@@ -98,7 +98,7 @@ export default function ImageGallery() {
         <h1 className="text-2xl font-bold">Minner fra Rotfest</h1>
         <button
           onClick={toggleFullscreen}
-          className="hidden md:blockpx-4 py-2 bg-gray-800 rounded hover:bg-gray-700 transition-colors"
+          className="hidden md:block px-4 py-2 bg-gray-800 rounded hover:bg-gray-700 transition-colors"
         >
           {isFullscreen ? "Avslutt fullskjerm" : "Fullskjerm"}
         </button>
