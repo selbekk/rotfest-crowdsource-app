@@ -2,8 +2,8 @@ import * as admin from "firebase-admin";
 import { getFirestore } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
 import * as logger from "firebase-functions/logger";
-import { onDocumentWritten } from "firebase-functions/v2/firestore";
 import { defineSecret } from "firebase-functions/params";
+import { onDocumentWritten } from "firebase-functions/v2/firestore";
 
 // Corrected paths assuming lib and types are at the project root
 import { processImageWithOpenAI } from "./openai-service";
@@ -20,6 +20,7 @@ export const processUploadedImage = onDocumentWritten(
   {
     document: "images/{imageId}", // Listen to writes on any document in the 'images' collection
     secrets: [openaiApiKey], // Make the secret available to this function
+    region: "europe-west2",
   },
   async (event) => {
     logger.info(
