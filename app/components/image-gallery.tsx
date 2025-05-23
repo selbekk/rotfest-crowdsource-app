@@ -26,10 +26,10 @@ export default function ImageGallery() {
   useEffect(() => {
     // Set up the interval to change images every 5 seconds
     const interval = setInterval(() => {
-      if (images.length > 3) {
+      if (images.length > 6) {
         setCurrentIndex((prevIndex) => {
           // Calculate the next index, ensuring we don't go out of bounds
-          const nextIndex = prevIndex + 3
+          const nextIndex = prevIndex + 6
           return nextIndex >= images.length ? 0 : nextIndex
         })
       }
@@ -82,11 +82,11 @@ export default function ImageGallery() {
     )
   }
 
-  // Get the current set of 3 images to display
-  const currentImages = images.slice(currentIndex, currentIndex + 3)
-  // If we don't have 3 images, add from the beginning
-  if (currentImages.length < 3 && images.length > 3) {
-    currentImages.push(...images.slice(0, 3 - currentImages.length))
+  // Get the current set of 6 images to display
+  const currentImages = images.slice(currentIndex, currentIndex + 6)
+  // If we don't have 6 images, add from the beginning
+  if (currentImages.length < 6 && images.length > 6) {
+    currentImages.push(...images.slice(0, 6 - currentImages.length))
   }
 
   return (
@@ -111,13 +111,19 @@ export default function ImageGallery() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.5 }}
-                className="relative aspect-square overflow-hidden rounded-lg"
+                className="relative aspect-square overflow-hidden rounded-lg bg-gray-900"
               >
                 <img
-                  src={image.processedUrl || "/placeholder.svg"}
+                  src={image.processedUrl || image.originalUrl || "/placeholder.svg"}
                   alt={`Bilde fra ${image.userName || "Anonym"}`}
                   className="w-full h-full object-cover"
                 />
+                {image.status === "processing" && !image.processedUrl && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                    <Loader2 className="h-6 w-6 animate-spin text-white mr-2" />
+                    <p className="text-white text-sm font-semibold">Behandler...</p>
+                  </div>
+                )}
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
                   <p className="text-white font-medium">{image.userName || "Anonym"}</p>
                 </div>
@@ -130,7 +136,7 @@ export default function ImageGallery() {
       <div className="p-4 bg-black text-white text-center">
         <p>
           Totalt {images.length} bilder • Viser {Math.min(currentIndex + 1, images.length)}-
-          {Math.min(currentIndex + 3, images.length)} av {images.length}
+          {Math.min(currentIndex + 6, images.length)} av {images.length}
         </p>
       </div>
     </div>

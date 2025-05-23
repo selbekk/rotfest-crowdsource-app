@@ -1,20 +1,24 @@
 "use server";
 
 import { db, storage } from "@/lib/firebase";
-import { processImageWithOpenAI } from "@/lib/openai-service";
 import { addDoc, collection } from "firebase/firestore";
 import {
   getDownloadURL,
   ref,
   uploadBytes,
-  uploadString,
 } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
+import { cookies } from 'next/headers';
 
 export async function uploadImage(formData: FormData) {
   try {
     const file = formData.get("image") as File;
-    const userName = formData.get("userName") as string;
+    const userNameFromForm = formData.get("userName") as string;
+
+    const cookieStore = await cookies();
+    const userNameFromCookie = cookieStore.get('rotfest-user-name')?.value;
+
+    const userNameToSave = userNameFromForm || userNameFromCookie || "Anonym";
 
     if (!file) {
       throw new Error("Ingen fil valgt");
@@ -42,38 +46,17 @@ export async function uploadImage(formData: FormData) {
     // Get the download URL for the original image
     const originalUrl = await getDownloadURL(originalImageRef);
 
-    // Process the image with OpenAI
-    let processedUrl = originalUrl; // Fallback to original if processing fails
-    try {
-      const processedImageBase64String = await processImageWithOpenAI(
-        originalUrl
-      );
+    // The OpenAI processing will now be handled by a Firebase Cloud Function
+    // triggered by the creation of this Firestore document.
 
-      if (processedImageBase64String) {
-        // Download the processed image and upload to Firebase Storage
-        console.log("downloading image");
-
-        const processedImageRef = ref(storage, `processed/${imageId}`);
-        console.log("uploading to firebase");
-        const dataUrl = `data:image/jpeg;base64,${processedImageBase64String}`;
-        await uploadString(processedImageRef, dataUrl, "data_url", {
-          contentType: "image/jpeg",
-        });
-        console.log("uploaded to firebase");
-        processedUrl = await getDownloadURL(processedImageRef);
-        console.log("url found");
-      }
-    } catch (aiError) {
-      console.warn("AI processing failed, using original image:", aiError);
-    }
-
-    // Save image metadata to Firestore
+    // Save image metadata to Firestore, indicating processing is pending
     await addDoc(collection(db, "images"), {
       id: imageId,
       originalUrl,
-      processedUrl,
-      userName: userName || "Anonym",
+      // processedUrl will be added by the Cloud Function
+      userName: userNameToSave,
       createdAt: Date.now(),
+      status: "processing", // New status field
     });
 
     return { success: true, imageId };

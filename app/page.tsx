@@ -1,6 +1,10 @@
 import ImageUpload from "./components/image-upload"
+import { cookies } from 'next/headers';
 
-export default function Home() {
+export default async function Home() {
+  const cookieStore = await cookies();
+  const initialUserName = cookieStore.get('rotfest-user-name')?.value || "";
+  
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-4 sm:p-24 bg-gradient-to-b from-blue-50 to-white">
       <div className="w-full max-w-md">
@@ -9,7 +13,7 @@ export default function Home() {
           Last opp ditt bilde fra Bekk sin 25-årsfeiring i Vrådal. Bildet vil bli behandlet med AI for å legge til
           nasjonalromantiske elementer.
         </p>
-        <ImageUpload />
+        <ImageUpload initialUserName={initialUserName} />
         <div className="mt-8 text-center">
           <a href="/gallery" className="text-blue-600 hover:underline">
             Se alle bilder i galleriet →
