@@ -1,27 +1,27 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef } from "react"
-import { subscribeToImages } from "@/lib/image-service"
-import type { ImageData } from "@/types/image"
-import { motion, AnimatePresence } from "framer-motion"
-import { Loader2 } from "lucide-react"
+import { subscribeToImages } from "@/lib/image-service";
+import type { ImageData } from "@/types/image";
+import { AnimatePresence, motion } from "framer-motion";
+import { Loader2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 export default function ImageGallery() {
-  const [images, setImages] = useState<ImageData[]>([])
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [isFullscreen, setIsFullscreen] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const galleryRef = useRef<HTMLDivElement>(null)
+  const [images, setImages] = useState<ImageData[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const galleryRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Subscribe to image updates from Firestore
     const unsubscribe = subscribeToImages((newImages) => {
-      setImages(newImages)
-      setIsLoading(false)
-    })
+      setImages(newImages);
+      setIsLoading(false);
+    });
 
-    return () => unsubscribe()
-  }, [])
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     // Set up the interval to change images every 5 seconds
@@ -29,35 +29,36 @@ export default function ImageGallery() {
       if (images.length > 6) {
         setCurrentIndex((prevIndex) => {
           // Calculate the next index, ensuring we don't go out of bounds
-          const nextIndex = prevIndex + 6
-          return nextIndex >= images.length ? 0 : nextIndex
-        })
+          const nextIndex = prevIndex + 6;
+          return nextIndex >= images.length ? 0 : nextIndex;
+        });
       }
-    }, 5000)
+    }, 5000);
 
-    return () => clearInterval(interval)
-  }, [images.length])
+    return () => clearInterval(interval);
+  }, [images.length]);
 
   const toggleFullscreen = () => {
     if (!isFullscreen) {
       if (galleryRef.current?.requestFullscreen) {
-        galleryRef.current.requestFullscreen()
+        galleryRef.current.requestFullscreen();
       }
     } else {
       if (document.exitFullscreen) {
-        document.exitFullscreen()
+        document.exitFullscreen();
       }
     }
-  }
+  };
 
   useEffect(() => {
     const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement)
-    }
+      setIsFullscreen(!!document.fullscreenElement);
+    };
 
-    document.addEventListener("fullscreenchange", handleFullscreenChange)
-    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange)
-  }, [])
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () =>
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
 
   // Add loading state to the render
   if (isLoading) {
@@ -68,7 +69,7 @@ export default function ImageGallery() {
           <p className="text-xl">Laster bildegalleri...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (images.length === 0) {
@@ -76,17 +77,19 @@ export default function ImageGallery() {
       <div className="w-full h-screen flex items-center justify-center bg-black">
         <div className="text-white text-center">
           <p className="text-2xl mb-4">Ingen bilder ennå</p>
-          <p className="text-gray-400">Vent på at noen laster opp det første bildet!</p>
+          <p className="text-gray-400">
+            Vent på at noen laster opp det første bildet!
+          </p>
         </div>
       </div>
-    )
+    );
   }
 
   // Get the current set of 6 images to display
-  const currentImages = images.slice(currentIndex, currentIndex + 6)
+  const currentImages = images.slice(currentIndex, currentIndex + 6);
   // If we don't have 6 images, add from the beginning
   if (currentImages.length < 6 && images.length > 6) {
-    currentImages.push(...images.slice(0, 6 - currentImages.length))
+    currentImages.push(...images.slice(0, 6 - currentImages.length));
   }
 
   return (
@@ -104,9 +107,9 @@ export default function ImageGallery() {
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="grid grid-cols-3 gap-4 w-full h-full">
           <AnimatePresence mode="wait">
-            {currentImages.map((image, index) => (
+            {currentImages.map((image) => (
               <motion.div
-                key={`${image.id}-${index}`}
+                key={`${image.id}`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
@@ -114,18 +117,26 @@ export default function ImageGallery() {
                 className="relative aspect-square overflow-hidden rounded-lg bg-gray-900"
               >
                 <img
-                  src={image.processedUrl || image.originalUrl || "/placeholder.svg"}
+                  src={
+                    image.processedUrl ||
+                    image.originalUrl ||
+                    "/placeholder.svg"
+                  }
                   alt={`Bilde fra ${image.userName || "Anonym"}`}
                   className="w-full h-full object-cover"
                 />
                 {image.status === "processing" && !image.processedUrl && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black/50">
                     <Loader2 className="h-6 w-6 animate-spin text-white mr-2" />
-                    <p className="text-white text-sm font-semibold">Behandler...</p>
+                    <p className="text-white text-sm font-semibold">
+                      Behandler...
+                    </p>
                   </div>
                 )}
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
-                  <p className="text-white font-medium">{image.userName || "Anonym"}</p>
+                  <p className="text-white font-medium">
+                    {image.userName || "Anonym"}
+                  </p>
                 </div>
               </motion.div>
             ))}
@@ -135,15 +146,16 @@ export default function ImageGallery() {
 
       <div className="p-4 bg-black text-white text-center">
         <p>
-          Totalt {images.length} bilder • Viser {Math.min(currentIndex + 1, images.length)}-
+          Totalt {images.length} bilder • Viser{" "}
+          {Math.min(currentIndex + 1, images.length)}-
           {Math.min(currentIndex + 6, images.length)} av {images.length}
         </p>
       </div>
       <img
         src="/qrcode.png"
         alt="QR Code"
-        className="fixed bottom-4 right-4 w-40 h-40 z-50 rounded-md border-2 border-white shadow-lg" 
+        className="fixed bottom-4 right-4 w-20 h-20 z-50 rounded-md border-2 border-white shadow-lg" // Adjusted size, added border/shadow for better visibility
       />
     </div>
-  )
+  );
 }

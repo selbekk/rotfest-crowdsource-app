@@ -21,6 +21,7 @@ export const processUploadedImage = onDocumentWritten(
     document: "images/{imageId}", // Listen to writes on any document in the 'images' collection
     secrets: [openaiApiKey], // Make the secret available to this function
     region: "europe-west2",
+    timeoutSeconds: 300,
   },
   async (event) => {
     logger.info(
