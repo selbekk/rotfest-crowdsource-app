@@ -3,9 +3,13 @@ import { getFirestore } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
 import * as logger from "firebase-functions/logger";
 import { onDocumentWritten } from "firebase-functions/v2/firestore";
+import { defineSecret } from "firebase-functions/params";
 
 // Corrected paths assuming lib and types are at the project root
 import { processImageWithOpenAI } from "./openai-service";
+
+// Define the OPENAI_API_KEY secret
+const openaiApiKey = defineSecret("OPENAI_API_KEY");
 
 admin.initializeApp();
 
@@ -13,7 +17,10 @@ const db = getFirestore();
 const storage = getStorage().bucket(); // Default bucket
 
 export const processUploadedImage = onDocumentWritten(
-  "images/{imageId}", // Listen to writes on any document in the 'images' collection
+  {
+    document: "images/{imageId}", // Listen to writes on any document in the 'images' collection
+    secrets: [openaiApiKey], // Make the secret available to this function
+  },
   async (event) => {
     logger.info(
       "Image processing function triggered for imageId:",
