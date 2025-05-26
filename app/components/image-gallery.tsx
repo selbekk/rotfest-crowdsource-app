@@ -19,6 +19,7 @@ export default function ImageGallery() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [numImagesToShow, setNumImagesToShow] = useState(IMAGES_PER_PAGE);
   const [isAutoplaying, setIsAutoplaying] = useState(true);
+  const [heldImageId, setHeldImageId] = useState<string | null>(null);
 
   useEffect(() => {
     const checkMobileView = () => {
@@ -170,12 +171,19 @@ export default function ImageGallery() {
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.5 }}
                 className="relative aspect-square overflow-hidden rounded-lg bg-gray-900"
+                onMouseDown={() => setHeldImageId(image.id)}
+                onMouseUp={() => setHeldImageId(null)}
+                onMouseLeave={() => setHeldImageId(null)} // Handle mouse leaving while pressed
+                onTouchStart={() => setHeldImageId(image.id)}
+                onTouchEnd={() => setHeldImageId(null)}
               >
                 <img
                   src={
-                    image.processedUrl ||
-                    image.originalUrl ||
-                    "/placeholder.svg"
+                    heldImageId === image.id
+                      ? image.originalUrl || "/placeholder.svg"
+                      : image.processedUrl ||
+                        image.originalUrl ||
+                        "/placeholder.svg"
                   }
                   alt={`Bilde fra ${image.userName || "Anonym"}`}
                   className="w-full h-full object-cover"
