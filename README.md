@@ -2,7 +2,7 @@
 
 This application was originally created for Bekk's 25th-anniversary celebration, "Rotfest." Attendees could upload their photos from the event, which were then processed by an AI to add a touch of Norwegian national romanticism. The image upload functionality is now closed, and the application primarily serves as a gallery to view these unique, AI-enhanced images.
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/kristofer-selbekks-projects/v0-rotfest-crowdsource-app)
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://v0-rotfest-crowdsource-app.vercel.app)
 
 ## About The Project
 
