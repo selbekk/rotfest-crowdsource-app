@@ -276,11 +276,6 @@ export default function ImageGallery() {
         </button>
       </div>
 
-      <img
-        src="/qrcode.png"
-        alt="QR Code"
-        className="hidden md:block fixed bottom-4 right-4 w-40 h-40 z-50 rounded-md border-2 border-white shadow-lg"
-      />
     </div>
   );
 }
