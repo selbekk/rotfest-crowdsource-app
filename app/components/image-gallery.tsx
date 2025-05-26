@@ -3,7 +3,15 @@
 import { subscribeToImages } from "@/lib/image-service";
 import type { ImageData } from "@/types/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { Loader2, Maximize, Minimize, Pause, Play } from "lucide-react";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  Loader2,
+  Maximize,
+  Minimize,
+  Pause,
+  Play,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 const IMAGES_PER_PAGE = 6;
@@ -46,7 +54,7 @@ export default function ImageGallery() {
           const nextIndex = prevIndex + IMAGES_PER_PAGE;
           return nextIndex >= images.length ? 0 : nextIndex;
         });
-      }, 15000);
+      }, 5000);
     }
     return () => {
       if (intervalId) clearInterval(intervalId);
@@ -122,36 +130,24 @@ export default function ImageGallery() {
     );
   };
 
+  const handlePreviousPage = () => {
+    setCurrentIndex((prevIndex) => Math.max(0, prevIndex - IMAGES_PER_PAGE));
+  };
+
+  const handleNextPage = () => {
+    setCurrentIndex((prevIndex) => {
+      // Only advance if there are more images to show on the next page
+      if (prevIndex + IMAGES_PER_PAGE < images.length) {
+        return prevIndex + IMAGES_PER_PAGE;
+      }
+      return prevIndex; // Otherwise, stay on the current page
+    });
+  };
+
   return (
     <div ref={galleryRef} className="w-full h-full bg-black flex flex-col">
       <div className="flex justify-between items-center p-4 bg-black text-white">
         <h1 className="text-2xl font-bold">Minner fra Rotfest</h1>
-        <div className="flex gap-2">
-          <button
-            onClick={toggleFullscreen}
-            className="hidden md:block px-4 py-2 bg-gray-800 rounded hover:bg-gray-700 transition-colors"
-            aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
-          >
-            {isFullscreen ? (
-              <Minimize className="h-5 w-5" />
-            ) : (
-              <Maximize className="h-5 w-5" />
-            )}
-          </button>
-          {!isMobileView && (
-            <button
-              onClick={() => setIsAutoplaying((prev) => !prev)}
-              className="hidden md:block px-4 py-2 bg-gray-800 rounded hover:bg-gray-700 transition-colors ml-2"
-              aria-label={isAutoplaying ? "Pause autoplay" : "Start autoplay"}
-            >
-              {isAutoplaying ? (
-                <Pause className="h-5 w-5" />
-              ) : (
-                <Play className="h-5 w-5" />
-              )}
-            </button>
-          )}
-        </div>
       </div>
 
       <div className="flex-1 flex items-center justify-center p-4">
@@ -231,6 +227,53 @@ export default function ImageGallery() {
             Last inn flere bilder
           </button>
         )}
+      </div>
+
+      <div className="absolute top-4 right-4 z-20 flex space-x-2 bg-black/50 p-2 rounded-md">
+        <button
+          onClick={() => setIsAutoplaying((prev) => !prev)}
+          className="p-2 text-white hover:bg-white/20 rounded-md transition-colors"
+          aria-label={isAutoplaying ? "Pause autoplay" : "Start autoplay"}
+        >
+          {isAutoplaying ? (
+            <Pause className="h-5 w-5" />
+          ) : (
+            <Play className="h-5 w-5" />
+          )}
+        </button>
+        {/* Desktop Previous Button */}
+        {!isMobileView && images.length > IMAGES_PER_PAGE && (
+          <button
+            onClick={handlePreviousPage}
+            disabled={currentIndex === 0}
+            className="p-2 text-white hover:bg-white/20 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Previous image"
+          >
+            <ChevronLeftIcon className="h-5 w-5" />
+          </button>
+        )}
+        {/* Desktop Next Button */}
+        {!isMobileView && images.length > IMAGES_PER_PAGE && (
+          <button
+            onClick={handleNextPage}
+            disabled={currentIndex + IMAGES_PER_PAGE >= images.length}
+            className="p-2 text-white hover:bg-white/20 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Next image"
+          >
+            <ChevronRightIcon className="h-5 w-5" />
+          </button>
+        )}
+        <button
+          onClick={toggleFullscreen}
+          className="p-2 text-white hover:bg-white/20 rounded-md transition-colors"
+          aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+        >
+          {isFullscreen ? (
+            <Minimize className="h-5 w-5" />
+          ) : (
+            <Maximize className="h-5 w-5" />
+          )}
+        </button>
       </div>
 
       <img
