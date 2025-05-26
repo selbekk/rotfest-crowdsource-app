@@ -121,4 +121,4 @@ As this project was for a specific event and is now primarily a gallery, contrib
 
 ## License
 
-This project is likely under a standard open-source license if specified, or proprietary if not. Please check for a `LICENSE` file. (Assuming MIT if none is present, but good to clarify).
+MIT
